@@ -33,6 +33,7 @@ export async function createOrder(app: FastifyInstance) {
       },
       async (request, reply) => {
         const { userId: customerId } = await request.getCurrentUser()
+
         const { restaurantId } = request.params
         const { items } = request.body
 

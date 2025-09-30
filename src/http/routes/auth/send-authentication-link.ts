@@ -1,12 +1,13 @@
 import { createId } from '@paralleldrive/cuid2'
 import type { FastifyInstance } from 'fastify'
-import z from 'zod'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { z } from 'zod'
 
 import { UnauthorizedError } from '@/http/routes/_errors/unauthorized-error'
 import { prisma } from '@/lib/prisma'
 
 export async function sendAuthenticationLink(app: FastifyInstance) {
-  app.post(
+  app.withTypeProvider<ZodTypeProvider>().post(
     '/authenticate',
     {
       schema: {
@@ -18,7 +19,7 @@ export async function sendAuthenticationLink(app: FastifyInstance) {
       },
     },
     async (request, reply) => {
-      const { email } = request.body as { email: string }
+      const { email } = request.body
 
       const userFromEmail = await prisma.user.findFirst({
         where: { email },

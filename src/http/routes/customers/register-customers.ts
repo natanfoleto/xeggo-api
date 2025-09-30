@@ -1,51 +1,40 @@
 import type { FastifyInstance } from 'fastify'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 
 import { prisma } from '@/lib/prisma'
 
-const registerCustomerBodySchema = z.object({
-  name: z.string().min(1),
-  phone: z.string(),
-  email: z.string().email(),
-})
-
 export async function registerCustomer(app: FastifyInstance) {
-  app.post(
+  app.withTypeProvider<ZodTypeProvider>().post(
     '/customers',
     {
       schema: {
         tags: ['Customers'],
         summary: 'Registrar um novo cliente',
-        body: {
-          type: 'object',
-          properties: {
-            name: { type: 'string' },
-            phone: { type: 'string' },
-            email: { type: 'string', format: 'email' },
-          },
-          required: ['name', 'phone', 'email'],
-        },
+        body: z.object({
+          name: z.string().min(1),
+          phone: z.string(),
+          email: z.string().email(),
+        }),
         response: {
           201: {
-            type: 'object',
-            properties: {
-              id: { type: 'string' },
-              name: { type: 'string' },
-              phone: { type: 'string' },
-              email: { type: 'string' },
-            },
+            body: z.object({
+              id: z.string(),
+              name: z.string(),
+              phone: z.string(),
+              email: z.string(),
+            }),
           },
           409: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
+            body: z.object({
+              message: z.string(),
+            }),
           },
         },
       },
     },
     async (request, reply) => {
-      const body = request.body as unknown
-
-      const { name, phone, email } = registerCustomerBodySchema.parse(body)
+      const { name, phone, email } = request.body
 
       const customer = await prisma.user.create({
         data: {

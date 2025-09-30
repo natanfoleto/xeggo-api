@@ -1,3 +1,4 @@
+import { OrderStatus } from '@prisma/client'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -6,7 +7,6 @@ import { authenticate } from '@/http/middlewares/authenticate'
 import { NotAManagerError } from '@/http/routes/_errors/not-a-manager-error'
 import { UnauthorizedError } from '@/http/routes/_errors/unauthorized-error'
 import { prisma } from '@/lib/prisma'
-import { OrderStatus } from '@prisma/client'
 
 export async function approveOrder(app: FastifyInstance) {
   app

@@ -58,6 +58,7 @@ export async function getOrders(app: FastifyInstance) {
       },
       async (request) => {
         const { restaurantId } = await request.getCurrentUser()
+
         const { pageIndex, orderId, customerName, status } = request.query
 
         const where: Prisma.OrderWhereInput = { restaurantId }
