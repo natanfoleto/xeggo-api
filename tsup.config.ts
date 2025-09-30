@@ -6,5 +6,4 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  noExternal: ['@xeggo/auth', '@xeggo/env', '@xeggo/types'],
 })
