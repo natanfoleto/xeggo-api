@@ -1,0 +1,56 @@
+{
+  "name": "xeggo-api",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsup",
+    "start": "node --no-deprecation dist/http/server.js",
+    "dev": "pnpm tsx watch --ignore ../../node_modules src/http/server.ts",
+    "db:seed": "pnpm prisma/seed.ts",
+    "db:migrate": "pnpm prisma migrate dev",
+    "db:deploy": "pnpm prisma migrate deploy",
+    "db:studio": "pnpm prisma studio",
+    "env:load": "dotenv -e ../../.env --",
+    "eslint:fix": "eslint --fix src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.787.0",
+    "@fastify/cookie": "^6.0.0",
+    "@fastify/cors": "^9.0.1",
+    "@fastify/jwt": "^8.0.1",
+    "@fastify/multipart": "^8.3.0",
+    "@fastify/swagger": "^8.14.0",
+    "@fastify/swagger-ui": "^3.0.0",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "@prisma/client": "5.14.0",
+    "bcryptjs": "^2.4.3",
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.5.0",
+    "fastify": "^4.27.0",
+    "fastify-plugin": "^4.5.1",
+    "fastify-type-provider-zod": "^1.2.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.0.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.19.17",
+    "@rocketseat/eslint-config": "^2.2.2",
+    "eslint-plugin-simple-import-sort": "^12.0.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.13",
+    "chalk": "^5.6.2",
+    "dotenv-cli": "^7.4.2",
+    "prisma": "^5.14.0",
+    "tsup": "^8.3.0",
+    "tsx": "^4.10.2"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "prettier": "@xeggo/prettier",
+  "eslintConfig": {
+    "extends": [
+      "@xeggo/eslint-config/node"
+    ]
+  }
+}

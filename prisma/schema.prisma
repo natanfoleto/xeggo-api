@@ -1,0 +1,136 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  manager
+  customer
+
+  @@map("user_role")
+}
+
+enum OrderStatus {
+  pending
+  canceled
+  processing
+  delivering
+  delivered
+
+  @@map("order_status")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  role      UserRole @default(customer)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  restaurantsManaged Restaurant[] @relation("ManagerRestaurants")
+  orders             Order[]      @relation("CustomerOrders")
+  evaluations        Evaluation[]
+  authLinks          AuthLink[]
+
+  @@map("users")
+}
+
+model Restaurant {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  managerId   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  manager     User?        @relation("ManagerRestaurants", fields: [managerId], references: [id], onDelete: SetNull)
+  products    Product[]
+  orders      Order[]
+  evaluations Evaluation[]
+
+  @@index([managerId])
+  @@map("restaurants")
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  priceInCents Int
+  restaurantId String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@index([restaurantId])
+  @@map("products")
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  status       OrderStatus @default(pending)
+  customerId   String
+  restaurantId String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  customer   User        @relation("CustomerOrders", fields: [customerId], references: [id])
+  restaurant Restaurant  @relation(fields: [restaurantId], references: [id])
+  orderItems OrderItem[]
+
+  @@index([customerId])
+  @@index([restaurantId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id           String   @id @default(cuid())
+  orderId      String
+  productId    String?
+  quantity     Int      @default(1)
+  priceInCents Int
+  createdAt    DateTime @default(now())
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model Evaluation {
+  id           String   @id @default(cuid())
+  customerId   String
+  restaurantId String
+  rate         Int
+  comment      String?
+  createdAt    DateTime @default(now())
+
+  customer   User       @relation(fields: [customerId], references: [id])
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@index([customerId])
+  @@index([restaurantId])
+  @@map("evaluations")
+}
+
+model AuthLink {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("auth_links")
+}
