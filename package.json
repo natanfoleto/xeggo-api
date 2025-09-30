@@ -5,7 +5,7 @@
     "build": "tsup",
     "start": "node --no-deprecation dist/http/server.js",
     "dev": "pnpm tsx watch --ignore ../../node_modules src/http/server.ts",
-    "db:seed": "pnpm prisma/seed.ts",
+    "db:seed": "pnpm tsx prisma/seed.ts",
     "db:migrate": "pnpm prisma migrate dev",
     "db:deploy": "pnpm prisma migrate deploy",
     "db:studio": "pnpm prisma studio",

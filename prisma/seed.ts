@@ -61,6 +61,7 @@ async function main() {
 
   // Criar produtos
   const products = []
+
   for (let i = 0; i < 10; i++) {
     const product = await prisma.product.create({
       data: {

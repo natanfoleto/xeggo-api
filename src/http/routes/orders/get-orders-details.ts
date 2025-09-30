@@ -20,7 +20,7 @@ const orderItemSchema = z.object({
 
 const orderResponseSchema = z.object({
   id: z.string(),
-  createdAt: z.string(),
+  createdAt: z.date(),
   status: z.string(),
   totalInCents: z.number(),
   customer: z.object({
