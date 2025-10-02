@@ -41,6 +41,16 @@ export async function getOrderDetails(app: FastifyInstance) {
                       name: z.string(),
                     })
                     .nullable(),
+                  selectedComplements: z.array(
+                    z.object({
+                      id: z.string(),
+                      quantity: z.number(),
+                      priceInCents: z.number(),
+                      complement: z.object({
+                        name: z.string(),
+                      }),
+                    }),
+                  ),
                 }),
               ),
             }),
@@ -77,6 +87,21 @@ export async function getOrderDetails(app: FastifyInstance) {
                     name: true,
                   },
                 },
+                selectedComplements: {
+                  select: {
+                    id: true,
+                    quantity: true,
+                    priceInCents: true,
+                    complement: {
+                      select: {
+                        name: true,
+                      },
+                    },
+                  },
+                  orderBy: {
+                    id: 'asc',
+                  },
+                },
               },
               orderBy: {
                 id: 'asc',
@@ -89,10 +114,17 @@ export async function getOrderDetails(app: FastifyInstance) {
           throw new UnauthorizedError()
         }
 
-        const totalInCents = order.orderItems.reduce(
-          (acc, item) => acc + item.priceInCents * item.quantity,
-          0,
-        )
+        const totalInCents = order.orderItems.reduce((acc, item) => {
+          const itemTotal = item.priceInCents * item.quantity
+
+          const complementsTotal = item.selectedComplements.reduce(
+            (compAcc, complement) =>
+              compAcc + complement.priceInCents * complement.quantity,
+            0,
+          )
+
+          return acc + itemTotal + complementsTotal
+        }, 0)
 
         return { ...order, totalInCents }
       },
