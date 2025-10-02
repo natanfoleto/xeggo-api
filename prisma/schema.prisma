@@ -63,15 +63,66 @@ model Product {
   name         String
   description  String?
   priceInCents Int
+  photoUrl     String?
+  active       Boolean  @default(true)
   restaurantId String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  restaurant Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  orderItems OrderItem[]
+  restaurant       Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  ingredients      Ingredient[]
+  complementGroups ComplementGroup[]
+  orderItems       OrderItem[]
 
   @@index([restaurantId])
   @@map("products")
+}
+
+model Ingredient {
+  id        String @id @default(cuid())
+  name      String
+  productId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("ingredients")
+}
+
+model Complement {
+  id                String  @id @default(cuid())
+  name              String
+  priceInCents      Int?
+  description       String?
+  complementGroupId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  group ComplementGroup @relation(fields: [complementGroupId], references: [id], onDelete: Cascade)
+
+  orderItemComplements OrderItemComplement[]
+
+  @@index([complementGroupId])
+  @@map("complements")
+}
+
+model ComplementGroup {
+  id        String  @id @default(cuid())
+  name      String
+  mandatory Boolean @default(false)
+  min       Int
+  max       Int
+  productId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  complements Complement[]
+
+  @@index([productId])
+  @@map("complement_groups")
 }
 
 model Order {
@@ -97,14 +148,33 @@ model OrderItem {
   productId    String?
   quantity     Int      @default(1)
   priceInCents Int
+  observations String?
   createdAt    DateTime @default(now())
 
   order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
+  selectedComplements OrderItemComplement[]
+
   @@index([orderId])
   @@index([productId])
   @@map("order_items")
+}
+
+model OrderItemComplement {
+  id           String @id @default(cuid())
+  orderItemId  String
+  complementId String
+  quantity     Int    @default(1)
+  priceInCents Int
+  createdAt    DateTime @default(now())
+
+  orderItem  OrderItem  @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  complement Complement @relation(fields: [complementId], references: [id], onDelete: Restrict)
+
+  @@index([orderItemId])
+  @@index([complementId])
+  @@map("order_items_complements")
 }
 
 model Evaluation {
