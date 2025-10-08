@@ -10,19 +10,11 @@ export async function getCategories(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .register(authenticate)
     .get(
-      '/restaurants/:restaurantId/categories',
+      '/categories',
       {
         schema: {
           tags: ['Categorias'],
           summary: 'Listar categorias de um restaurante',
-          params: z.object({
-            restaurantId: z
-              .string({
-                required_error: 'O ID do restaurante é obrigatório',
-                invalid_type_error: 'O ID do restaurante deve ser uma string',
-              })
-              .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
-          }),
           response: {
             200: z.object({
               categories: z.array(
@@ -43,7 +35,7 @@ export async function getCategories(app: FastifyInstance) {
         },
       },
       async (request, reply) => {
-        const { restaurantId } = request.params
+        const { restaurantId } = await request.getCurrentUser()
 
         const categories = await prisma.category.findMany({
           where: {

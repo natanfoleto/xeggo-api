@@ -11,19 +11,11 @@ export async function createProduct(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .register(authenticate)
     .post(
-      '/restaurants/:restaurantId/products',
+      '/products',
       {
         schema: {
           tags: ['Produtos'],
           summary: 'Criar produto',
-          params: z.object({
-            restaurantId: z
-              .string({
-                required_error: 'O ID do restaurante é obrigatório',
-                invalid_type_error: 'O ID do restaurante deve ser uma string',
-              })
-              .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
-          }),
           body: z.object({
             name: z
               .string({
@@ -56,6 +48,102 @@ export async function createProduct(app: FastifyInstance) {
                 invalid_type_error: 'O campo ativo deve ser um booleano',
               })
               .default(true),
+            ingredients: z
+              .array(
+                z.object({
+                  name: z
+                    .string({
+                      required_error: 'O nome do ingrediente é obrigatório',
+                      invalid_type_error:
+                        'O nome do ingrediente deve ser uma string',
+                    })
+                    .min(
+                      1,
+                      'O nome do ingrediente deve ter pelo menos 1 caractere',
+                    )
+                    .max(
+                      100,
+                      'O nome do ingrediente deve ter no máximo 100 caracteres',
+                    ),
+                }),
+              )
+              .default([]),
+            complementGroups: z
+              .array(
+                z.object({
+                  name: z
+                    .string({
+                      required_error: 'O nome do grupo é obrigatório',
+                      invalid_type_error: 'O nome do grupo deve ser uma string',
+                    })
+                    .min(1, 'O nome do grupo deve ter pelo menos 1 caractere')
+                    .max(
+                      100,
+                      'O nome do grupo deve ter no máximo 100 caracteres',
+                    ),
+                  mandatory: z
+                    .boolean({
+                      invalid_type_error:
+                        'O campo obrigatório deve ser um booleano',
+                    })
+                    .default(false),
+                  min: z
+                    .number({
+                      invalid_type_error: 'O mínimo deve ser um número',
+                    })
+                    .int('O mínimo deve ser um número inteiro')
+                    .min(0, 'O mínimo deve ser no mínimo 0')
+                    .default(0),
+                  max: z
+                    .number({
+                      invalid_type_error: 'O máximo deve ser um número',
+                    })
+                    .int('O máximo deve ser um número inteiro')
+                    .min(1, 'O máximo deve ser no mínimo 1')
+                    .default(1),
+                  complements: z.array(
+                    z.object({
+                      name: z
+                        .string({
+                          required_error: 'O nome do complemento é obrigatório',
+                          invalid_type_error:
+                            'O nome do complemento deve ser uma string',
+                        })
+                        .min(
+                          1,
+                          'O nome do complemento deve ter pelo menos 1 caractere',
+                        )
+                        .max(
+                          100,
+                          'O nome do complemento deve ter no máximo 100 caracteres',
+                        ),
+                      priceInCents: z
+                        .number({
+                          invalid_type_error:
+                            'O preço do complemento deve ser um número',
+                        })
+                        .int(
+                          'O preço do complemento deve ser um número inteiro',
+                        )
+                        .min(0, 'O preço do complemento deve ser no mínimo 0')
+                        .optional()
+                        .nullable(),
+                      description: z
+                        .string({
+                          invalid_type_error:
+                            'A descrição do complemento deve ser uma string',
+                        })
+                        .max(
+                          300,
+                          'A descrição do complemento deve ter no máximo 300 caracteres',
+                        )
+                        .optional()
+                        .nullable(),
+                    }),
+                  ),
+                }),
+              )
+              .default([]),
           }),
           response: {
             201: z.object({
@@ -65,11 +153,18 @@ export async function createProduct(app: FastifyInstance) {
         },
       },
       async (request, reply) => {
-        const { restaurantId } = request.params
-        const { name, description, priceInCents, categoryId, active } =
-          request.body
+        const { restaurantId } = await request.getCurrentUser()
 
-        // Verificar se a categoria existe e pertence ao restaurante
+        const {
+          name,
+          description,
+          priceInCents,
+          categoryId,
+          active,
+          ingredients,
+          complementGroups,
+        } = request.body
+
         const category = await prisma.category.findUnique({
           where: { id: categoryId },
         })
@@ -92,6 +187,26 @@ export async function createProduct(app: FastifyInstance) {
             categoryId,
             active,
             restaurantId,
+            ingredients: {
+              create: ingredients.map((ingredient) => ({
+                name: ingredient.name,
+              })),
+            },
+            complementGroups: {
+              create: complementGroups.map((group) => ({
+                name: group.name,
+                mandatory: group.mandatory,
+                min: group.min,
+                max: group.max,
+                complements: {
+                  create: group.complements.map((complement) => ({
+                    name: complement.name,
+                    priceInCents: complement.priceInCents,
+                    description: complement.description,
+                  })),
+                },
+              })),
+            },
           },
           select: { id: true },
         })

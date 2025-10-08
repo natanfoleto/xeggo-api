@@ -11,19 +11,11 @@ export async function createCategory(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .register(authenticate)
     .post(
-      '/restaurants/:restaurantId/categories',
+      '/categories',
       {
         schema: {
           tags: ['Categorias'],
           summary: 'Criar categoria',
-          params: z.object({
-            restaurantId: z
-              .string({
-                required_error: 'O ID do restaurante é obrigatório',
-                invalid_type_error: 'O ID do restaurante deve ser uma string',
-              })
-              .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
-          }),
           body: z.object({
             name: z
               .string({
@@ -47,7 +39,8 @@ export async function createCategory(app: FastifyInstance) {
         },
       },
       async (request, reply) => {
-        const { restaurantId } = request.params
+        const { restaurantId } = await request.getCurrentUser()
+
         const { name, description } = request.body
 
         const existingCategory = await prisma.category.findFirst({
