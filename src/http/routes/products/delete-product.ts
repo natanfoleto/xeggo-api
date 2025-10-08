@@ -40,9 +40,11 @@ export async function deleteProduct(app: FastifyInstance) {
           throw new BadRequestError('Produto não encontrado.')
         }
 
-        // O Prisma vai deletar automaticamente ingredientes e complementos (onDelete: Cascade)
-        await prisma.product.delete({
+        await prisma.product.update({
           where: { id: productId },
+          data: {
+            active: false,
+          },
         })
 
         return reply.status(204).send()

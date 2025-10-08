@@ -111,7 +111,7 @@ export async function getProducts(app: FastifyInstance) {
           prisma.product.count({ where }),
         ])
 
-        return reply.status(200).send({
+        return reply.send({
           products,
           meta: {
             pageIndex,

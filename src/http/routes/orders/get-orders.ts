@@ -78,7 +78,7 @@ export async function getOrders(app: FastifyInstance) {
           },
         },
       },
-      async (request) => {
+      async (request, reply) => {
         const { restaurantId } = await request.getCurrentUser()
 
         const { pageIndex, orderId, customerName, status } = request.query
@@ -123,14 +123,14 @@ export async function getOrders(app: FastifyInstance) {
           ),
         }))
 
-        return {
+        return reply.send({
           orders,
           meta: {
             pageIndex,
             totalCount,
             perPage,
           },
-        }
+        })
       },
     )
 }

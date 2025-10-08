@@ -139,7 +139,7 @@ async function main() {
     console.log(chalk.yellow(`✔ Created categories for ${restaurant.name}`))
 
     // Criar 10 produtos para este restaurante
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 15; i++) {
       const category = faker.helpers.arrayElement(categories)
 
       const product = await prisma.product.create({
