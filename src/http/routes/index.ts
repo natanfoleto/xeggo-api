@@ -7,6 +7,11 @@ import { getPopularProducts } from './analytics/get-popular-products'
 import { authenticateFromLink } from './auth/authenticate-from-link'
 import { sendAuthenticationLink } from './auth/send-authentication-link'
 import { signOut } from './auth/sign-out'
+import { createCategory } from './categories/create-category'
+import { deleteCategory } from './categories/delete-category'
+import { getCategories } from './categories/get-categories'
+import { getCategory } from './categories/get-category'
+import { updateCategory } from './categories/update-category'
 import { createEvaluation } from './evaluations/create-evaluation'
 import { getEvaluations } from './evaluations/get-evaluations'
 import { approveOrder } from './orders/approve-order'
@@ -35,6 +40,12 @@ export default async function (app: FastifyInstance) {
 
   await app.register(createEvaluation)
   await app.register(getEvaluations)
+
+  await app.register(createCategory)
+  await app.register(updateCategory)
+  await app.register(deleteCategory)
+  await app.register(getCategory)
+  await app.register(getCategories)
 
   await app.register(approveOrder)
   await app.register(cancelOrder)

@@ -27,7 +27,7 @@ export async function createOrder(app: FastifyInstance) {
             ),
           }),
           response: {
-            201: z.object({ orderId: z.string() }),
+            201: z.object({ orderId: z.string().cuid() }),
           },
         },
       },

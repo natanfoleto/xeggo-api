@@ -50,12 +50,28 @@ model Restaurant {
   updatedAt   DateTime @updatedAt
 
   manager     User?        @relation("ManagerRestaurants", fields: [managerId], references: [id], onDelete: SetNull)
+  categories  Category[]
   products    Product[]
   orders      Order[]
   evaluations Evaluation[]
 
   @@index([managerId])
   @@map("restaurants")
+}
+
+model Category {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  restaurantId String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  products   Product[]
+
+  @@unique([restaurantId, name])
+  @@map("categories")
 }
 
 model Product {
@@ -65,10 +81,12 @@ model Product {
   priceInCents Int
   photoUrl     String?
   active       Boolean  @default(true)
+  categoryId   String
   restaurantId String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  category         Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   restaurant       Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   ingredients      Ingredient[]
   complementGroups ComplementGroup[]
@@ -79,11 +97,11 @@ model Product {
 }
 
 model Ingredient {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
   productId String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
@@ -92,13 +110,13 @@ model Ingredient {
 }
 
 model Complement {
-  id                String  @id @default(cuid())
+  id                String   @id @default(cuid())
   name              String
   priceInCents      Int?
   description       String?
   complementGroupId String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   group ComplementGroup @relation(fields: [complementGroupId], references: [id], onDelete: Cascade)
 
@@ -109,14 +127,14 @@ model Complement {
 }
 
 model ComplementGroup {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  mandatory Boolean @default(false)
+  mandatory Boolean  @default(false)
   min       Int
   max       Int
   productId String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   complements Complement[]
@@ -162,10 +180,10 @@ model OrderItem {
 }
 
 model OrderItemComplement {
-  id           String @id @default(cuid())
+  id           String   @id @default(cuid())
   orderItemId  String
   complementId String
-  quantity     Int    @default(1)
+  quantity     Int      @default(1)
   priceInCents Int
   createdAt    DateTime @default(now())
 

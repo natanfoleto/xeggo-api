@@ -72,6 +72,7 @@ export async function updateMenu(app: FastifyInstance) {
                   data: {
                     name: product.name,
                     description: product.description ?? null,
+                    categoryId: '',
                     priceInCents,
                   },
                 })
@@ -85,6 +86,7 @@ export async function updateMenu(app: FastifyInstance) {
               description: product.description ?? null,
               priceInCents: Math.round(Number(product.price) * 100),
               restaurantId,
+              categoryId: '',
             }))
 
             await tx.product.createMany({
@@ -93,7 +95,7 @@ export async function updateMenu(app: FastifyInstance) {
           }
         })
 
-        reply.code(204).send()
+        return reply.status(204).send()
       },
     )
 }
