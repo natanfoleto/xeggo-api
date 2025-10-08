@@ -14,7 +14,13 @@ export async function sendAuthenticationLink(app: FastifyInstance) {
         tags: ['Auth'],
         summary: 'Envia link mágico de autenticação por email',
         body: z.object({
-          email: z.string().email(),
+          email: z
+            .string({
+              required_error: 'O e-mail é obrigatório',
+              invalid_type_error: 'O e-mail deve ser uma string',
+            })
+            .email('O e-mail deve ser válido')
+            .max(255, 'O e-mail deve ter no máximo 255 caracteres'),
         }),
       },
     },

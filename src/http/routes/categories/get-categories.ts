@@ -16,7 +16,13 @@ export async function getCategories(app: FastifyInstance) {
           tags: ['Categorias'],
           summary: 'Listar categorias de um restaurante',
           params: z.object({
-            restaurantId: z.string().cuid(),
+            restaurantId: z
+              .string({
+                required_error: 'O ID do restaurante é obrigatório',
+                invalid_type_error: 'O ID do restaurante deve ser uma string',
+              })
+              .cuid('O ID do restaurante deve ser um CUID válido')
+              .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
           }),
           response: {
             200: z.object({

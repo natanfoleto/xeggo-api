@@ -17,8 +17,24 @@ export async function getDailyReceiptInPeriod(app: FastifyInstance) {
           tags: ['Metrics'],
           summary: 'Receita diária em um período de até 7 dias',
           querystring: z.object({
-            from: z.string().optional(),
-            to: z.string().optional(),
+            from: z
+              .string({
+                required_error: 'A data inicial é obrigatória',
+                invalid_type_error: 'A data inicial deve ser uma string',
+              })
+              .datetime({
+                message: 'A data inicial deve estar no formato ISO 8601',
+              })
+              .optional(),
+            to: z
+              .string({
+                required_error: 'A data final é obrigatória',
+                invalid_type_error: 'A data final deve ser uma string',
+              })
+              .datetime({
+                message: 'A data final deve estar no formato ISO 8601',
+              })
+              .optional(),
           }),
           response: {
             200: z.array(

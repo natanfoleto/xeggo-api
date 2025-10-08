@@ -17,11 +17,28 @@ export async function createCategory(app: FastifyInstance) {
           tags: ['Categorias'],
           summary: 'Criar categoria',
           params: z.object({
-            restaurantId: z.string(),
+            restaurantId: z
+              .string({
+                required_error: 'O ID do restaurante é obrigatório',
+                invalid_type_error: 'O ID do restaurante deve ser uma string',
+              })
+              .cuid('O ID do restaurante deve ser um CUID válido')
+              .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
           }),
           body: z.object({
-            name: z.string().min(1).max(100),
-            description: z.string().max(500).optional(),
+            name: z
+              .string({
+                required_error: 'O nome é obrigatório',
+                invalid_type_error: 'O nome deve ser uma string',
+              })
+              .min(1, 'O nome deve ter pelo menos 1 caractere')
+              .max(50, 'O nome deve ter no máximo 50 caracteres'),
+            description: z
+              .string({
+                invalid_type_error: 'A descrição deve ser uma string',
+              })
+              .max(300, 'A descrição deve ter no máximo 300 caracteres')
+              .optional(),
           }),
           response: {
             201: z.object({

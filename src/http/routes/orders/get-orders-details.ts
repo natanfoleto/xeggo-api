@@ -18,7 +18,13 @@ export async function getOrderDetails(app: FastifyInstance) {
           summary:
             'Detalhes de um pedido (apenas para managers do restaurante)',
           params: z.object({
-            id: z.string(),
+            id: z
+              .string({
+                required_error: 'O ID do pedido é obrigatório',
+                invalid_type_error: 'O ID do pedido deve ser uma string',
+              })
+              .cuid('O ID do pedido deve ser um CUID válido')
+              .max(30, 'O ID do pedido deve ter no máximo 30 caracteres'),
           }),
           response: {
             200: z.object({

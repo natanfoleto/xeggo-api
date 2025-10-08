@@ -16,7 +16,13 @@ export async function getEvaluations(app: FastifyInstance) {
           tags: ['Avaliações'],
           summary: 'Listar avaliações (admin restaurante)',
           querystring: z.object({
-            pageIndex: z.coerce.number().int().min(0).default(0),
+            pageIndex: z.coerce
+              .number({
+                invalid_type_error: 'O índice da página deve ser um número',
+              })
+              .int('O índice da página deve ser um número inteiro')
+              .min(0, 'O índice da página deve ser no mínimo 0')
+              .default(0),
           }),
         },
       },

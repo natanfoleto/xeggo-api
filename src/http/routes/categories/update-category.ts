@@ -17,11 +17,28 @@ export async function updateCategory(app: FastifyInstance) {
           tags: ['Categorias'],
           summary: 'Atualizar categoria',
           params: z.object({
-            categoryId: z.string().cuid(),
+            categoryId: z
+              .string({
+                required_error: 'O ID da categoria é obrigatório',
+                invalid_type_error: 'O ID da categoria deve ser uma string',
+              })
+              .cuid('O ID da categoria deve ser um CUID válido')
+              .max(30, 'O ID da categoria deve ter no máximo 30 caracteres'),
           }),
           body: z.object({
-            name: z.string().min(1).max(100).optional(),
-            description: z.string().max(500).optional(),
+            name: z
+              .string({
+                invalid_type_error: 'O nome deve ser uma string',
+              })
+              .min(1, 'O nome deve ter pelo menos 1 caractere')
+              .max(50, 'O nome deve ter no máximo 50 caracteres')
+              .optional(),
+            description: z
+              .string({
+                invalid_type_error: 'A descrição deve ser uma string',
+              })
+              .max(300, 'A descrição deve ter no máximo 300 caracteres')
+              .optional(),
           }),
           response: {
             204: z.null(),

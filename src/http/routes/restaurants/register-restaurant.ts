@@ -13,10 +13,36 @@ export async function registerRestaurant(app: FastifyInstance) {
         tags: ['Restaurantes'],
         summary: 'Cadastrar restaurante + gerente',
         body: z.object({
-          restaurantName: z.string(),
-          managerName: z.string(),
-          phone: z.string(),
-          email: z.string().email(),
+          restaurantName: z
+            .string({
+              required_error: 'O nome do restaurante é obrigatório',
+              invalid_type_error: 'O nome do restaurante deve ser uma string',
+            })
+            .min(1, 'O nome do restaurante deve ter pelo menos 1 caractere')
+            .max(
+              100,
+              'O nome do restaurante deve ter no máximo 100 caracteres',
+            ),
+          managerName: z
+            .string({
+              required_error: 'O nome do gerente é obrigatório',
+              invalid_type_error: 'O nome do gerente deve ser uma string',
+            })
+            .min(1, 'O nome do gerente deve ter pelo menos 1 caractere')
+            .max(100, 'O nome do gerente deve ter no máximo 100 caracteres'),
+          phone: z
+            .string({
+              required_error: 'O telefone é obrigatório',
+              invalid_type_error: 'O telefone deve ser uma string',
+            })
+            .max(20, 'O telefone deve ter no máximo 20 caracteres'),
+          email: z
+            .string({
+              required_error: 'O e-mail é obrigatório',
+              invalid_type_error: 'O e-mail deve ser uma string',
+            })
+            .email('O e-mail deve ser válido')
+            .max(255, 'O e-mail deve ter no máximo 255 caracteres'),
         }),
       },
     },

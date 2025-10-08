@@ -19,13 +19,42 @@ export async function updateMenu(app: FastifyInstance) {
             products: z.object({
               newOrUpdatedProducts: z.array(
                 z.object({
-                  id: z.string().optional(),
-                  name: z.string(),
-                  description: z.string().optional(),
-                  price: z.number().min(0),
+                  id: z
+                    .string({
+                      invalid_type_error: 'O ID do produto deve ser uma string',
+                    })
+                    .cuid('O ID do produto deve ser um CUID válido')
+                    .max(30, 'O ID do produto deve ter no máximo 30 caracteres')
+                    .optional(),
+                  name: z
+                    .string({
+                      required_error: 'O nome é obrigatório',
+                      invalid_type_error: 'O nome deve ser uma string',
+                    })
+                    .min(1, 'O nome deve ter pelo menos 1 caractere')
+                    .max(100, 'O nome deve ter no máximo 100 caracteres'),
+                  description: z
+                    .string({
+                      invalid_type_error: 'A descrição deve ser uma string',
+                    })
+                    .max(500, 'A descrição deve ter no máximo 500 caracteres')
+                    .optional(),
+                  price: z
+                    .number({
+                      required_error: 'O preço é obrigatório',
+                      invalid_type_error: 'O preço deve ser um número',
+                    })
+                    .min(0, 'O preço deve ser no mínimo 0'),
                 }),
               ),
-              deletedProductIds: z.array(z.string()),
+              deletedProductIds: z.array(
+                z
+                  .string({
+                    invalid_type_error: 'O ID do produto deve ser uma string',
+                  })
+                  .cuid('O ID do produto deve ser um CUID válido')
+                  .max(30, 'O ID do produto deve ter no máximo 30 caracteres'),
+              ),
             }),
           }),
           response: {

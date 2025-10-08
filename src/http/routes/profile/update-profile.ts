@@ -16,8 +16,20 @@ export async function updateProfile(app: FastifyInstance) {
           tags: ['Perfil'],
           summary: 'Atualizar dados do restaurante gerenciado',
           body: z.object({
-            name: z.string(),
-            description: z.string().optional().nullable(),
+            name: z
+              .string({
+                required_error: 'O nome é obrigatório',
+                invalid_type_error: 'O nome deve ser uma string',
+              })
+              .min(1, 'O nome deve ter pelo menos 1 caractere')
+              .max(100, 'O nome deve ter no máximo 100 caracteres'),
+            description: z
+              .string({
+                invalid_type_error: 'A descrição deve ser uma string',
+              })
+              .max(500, 'A descrição deve ter no máximo 500 caracteres')
+              .optional()
+              .nullable(),
           }),
         },
       },

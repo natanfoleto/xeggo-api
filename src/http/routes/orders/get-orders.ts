@@ -17,17 +17,40 @@ export async function getOrders(app: FastifyInstance) {
           tags: ['Pedidos'],
           summary: 'Listar pedidos (admin restaurante)',
           querystring: z.object({
-            pageIndex: z.coerce.number().int().min(0).default(0),
-            orderId: z.string().optional(),
-            customerName: z.string().optional(),
+            pageIndex: z.coerce
+              .number({
+                invalid_type_error: 'O índice da página deve ser um número',
+              })
+              .int('O índice da página deve ser um número inteiro')
+              .min(0, 'O índice da página deve ser no mínimo 0')
+              .default(0),
+            orderId: z
+              .string({
+                invalid_type_error: 'O ID do pedido deve ser uma string',
+              })
+              .cuid('O ID do pedido deve ser um CUID válido')
+              .max(30, 'O ID do pedido deve ter no máximo 30 caracteres')
+              .optional(),
+            customerName: z
+              .string({
+                invalid_type_error: 'O nome do cliente deve ser uma string',
+              })
+              .max(100, 'O nome do cliente deve ter no máximo 100 caracteres')
+              .optional(),
             status: z
-              .enum([
-                'pending',
-                'canceled',
-                'processing',
-                'delivering',
-                'delivered',
-              ])
+              .enum(
+                [
+                  'pending',
+                  'canceled',
+                  'processing',
+                  'delivering',
+                  'delivered',
+                ],
+                {
+                  invalid_type_error: 'O status deve ser um valor válido',
+                  required_error: 'O status é obrigatório',
+                },
+              )
               .optional(),
           }),
           response: {

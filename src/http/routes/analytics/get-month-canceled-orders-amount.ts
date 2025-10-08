@@ -19,8 +19,15 @@ export async function getMonthCanceledOrdersAmount(app: FastifyInstance) {
             'Quantidade de pedidos cancelados no mês atual e variação em relação ao mês anterior',
           response: {
             200: z.object({
-              amount: z.number(),
-              diffFromLastMonth: z.number(),
+              amount: z.number({
+                required_error: 'A quantidade é obrigatória',
+                invalid_type_error: 'A quantidade deve ser um número',
+              }),
+              diffFromLastMonth: z.number({
+                required_error: 'A diferença do mês anterior é obrigatória',
+                invalid_type_error:
+                  'A diferença do mês anterior deve ser um número',
+              }),
             }),
           },
         },

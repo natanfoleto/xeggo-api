@@ -17,14 +17,43 @@ export async function createOrder(app: FastifyInstance) {
         schema: {
           tags: ['Pedidos'],
           summary: 'Criar pedido',
-          params: z.object({ restaurantId: z.string() }),
+          params: z.object({
+            restaurantId: z
+              .string({
+                required_error: 'O ID do restaurante é obrigatório',
+                invalid_type_error: 'O ID do restaurante deve ser uma string',
+              })
+              .cuid('O ID do restaurante deve ser um CUID válido')
+              .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
+          }),
           body: z.object({
-            items: z.array(
-              z.object({
-                productId: z.string(),
-                quantity: z.number().int().positive(),
-              }),
-            ),
+            items: z
+              .array(
+                z.object({
+                  productId: z
+                    .string({
+                      required_error: 'O ID do produto é obrigatório',
+                      invalid_type_error: 'O ID do produto deve ser uma string',
+                    })
+                    .cuid('O ID do produto deve ser um CUID válido')
+                    .max(
+                      30,
+                      'O ID do produto deve ter no máximo 30 caracteres',
+                    ),
+                  quantity: z
+                    .number({
+                      required_error: 'A quantidade é obrigatória',
+                      invalid_type_error: 'A quantidade deve ser um número',
+                    })
+                    .int('A quantidade deve ser um número inteiro')
+                    .positive('A quantidade deve ser positiva'),
+                }),
+                {
+                  required_error: 'Os itens são obrigatórios',
+                  invalid_type_error: 'Os itens devem ser um array',
+                },
+              )
+              .min(1, 'Deve haver pelo menos 1 item no pedido'),
           }),
           response: {
             201: z.object({ orderId: z.string().cuid() }),

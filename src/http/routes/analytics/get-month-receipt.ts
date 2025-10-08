@@ -18,8 +18,15 @@ export async function getMonthReceipt(app: FastifyInstance) {
           summary: 'Receita do mês atual e variação em relação ao mês anterior',
           response: {
             200: z.object({
-              receipt: z.number(),
-              diffFromLastMonth: z.number(),
+              receipt: z.number({
+                required_error: 'A receita é obrigatória',
+                invalid_type_error: 'A receita deve ser um número',
+              }),
+              diffFromLastMonth: z.number({
+                required_error: 'A diferença do mês anterior é obrigatória',
+                invalid_type_error:
+                  'A diferença do mês anterior deve ser um número',
+              }),
             }),
           },
         },

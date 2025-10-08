@@ -17,14 +17,47 @@ export async function createProduct(app: FastifyInstance) {
           tags: ['Produtos'],
           summary: 'Criar produto',
           params: z.object({
-            restaurantId: z.string().cuid(),
+            restaurantId: z
+              .string({
+                required_error: 'O ID do restaurante é obrigatório',
+                invalid_type_error: 'O ID do restaurante deve ser uma string',
+              })
+              .cuid('O ID do restaurante deve ser um CUID válido')
+              .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
           }),
           body: z.object({
-            name: z.string().min(1).max(100),
-            description: z.string().max(500).optional(),
-            priceInCents: z.number().int().positive(),
-            categoryId: z.string().cuid(),
-            active: z.boolean().default(true),
+            name: z
+              .string({
+                required_error: 'O nome é obrigatório',
+                invalid_type_error: 'O nome deve ser uma string',
+              })
+              .min(1, 'O nome deve ter pelo menos 1 caractere')
+              .max(100, 'O nome deve ter no máximo 100 caracteres'),
+            description: z
+              .string({
+                invalid_type_error: 'A descrição deve ser uma string',
+              })
+              .max(500, 'A descrição deve ter no máximo 500 caracteres')
+              .optional(),
+            priceInCents: z
+              .number({
+                required_error: 'O preço é obrigatório',
+                invalid_type_error: 'O preço deve ser um número',
+              })
+              .int('O preço deve ser um número inteiro')
+              .positive('O preço deve ser positivo'),
+            categoryId: z
+              .string({
+                required_error: 'O ID da categoria é obrigatório',
+                invalid_type_error: 'O ID da categoria deve ser uma string',
+              })
+              .cuid('O ID da categoria deve ser um CUID válido')
+              .max(30, 'O ID da categoria deve ter no máximo 30 caracteres'),
+            active: z
+              .boolean({
+                invalid_type_error: 'O campo ativo deve ser um booleano',
+              })
+              .default(true),
           }),
           response: {
             201: z.object({

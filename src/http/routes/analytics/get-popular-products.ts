@@ -18,8 +18,14 @@ export async function getPopularProducts(app: FastifyInstance) {
           response: {
             200: z.array(
               z.object({
-                product: z.string(),
-                amount: z.number(),
+                product: z.string({
+                  required_error: 'O nome do produto é obrigatório',
+                  invalid_type_error: 'O nome do produto deve ser uma string',
+                }),
+                amount: z.number({
+                  required_error: 'A quantidade é obrigatória',
+                  invalid_type_error: 'A quantidade deve ser um número',
+                }),
               }),
             ),
           },

@@ -14,8 +14,19 @@ export async function authenticateFromLink(app: FastifyInstance) {
         tags: ['Auth'],
         summary: 'Autenticar via link mágico',
         querystring: z.object({
-          code: z.string(),
-          redirect: z.string().url(),
+          code: z
+            .string({
+              required_error: 'O código é obrigatório',
+              invalid_type_error: 'O código deve ser uma string',
+            })
+            .max(100, 'O código deve ter no máximo 100 caracteres'),
+          redirect: z
+            .string({
+              required_error: 'A URL de redirecionamento é obrigatória',
+              invalid_type_error:
+                'A URL de redirecionamento deve ser uma string',
+            })
+            .url('A URL de redirecionamento deve ser válida'),
         }),
       },
     },

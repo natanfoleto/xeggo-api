@@ -17,7 +17,13 @@ export async function deleteCategory(app: FastifyInstance) {
           tags: ['Categorias'],
           summary: 'Deletar categoria',
           params: z.object({
-            categoryId: z.string().cuid(),
+            categoryId: z
+              .string({
+                required_error: 'O ID da categoria é obrigatório',
+                invalid_type_error: 'O ID da categoria deve ser uma string',
+              })
+              .cuid('O ID da categoria deve ser um CUID válido')
+              .max(30, 'O ID da categoria deve ter no máximo 30 caracteres'),
           }),
           response: {
             204: z.null(),

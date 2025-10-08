@@ -17,7 +17,15 @@ export async function cancelOrder(app: FastifyInstance) {
         schema: {
           tags: ['Pedidos'],
           summary: 'Cancelar pedido',
-          params: z.object({ id: z.string() }),
+          params: z.object({
+            id: z
+              .string({
+                required_error: 'O ID do pedido é obrigatório',
+                invalid_type_error: 'O ID do pedido deve ser uma string',
+              })
+              .cuid('O ID do pedido deve ser um CUID válido')
+              .max(30, 'O ID do pedido deve ter no máximo 30 caracteres'),
+          }),
         },
       },
       async (request, reply) => {
