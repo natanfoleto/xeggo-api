@@ -23,7 +23,6 @@ export async function createOrder(app: FastifyInstance) {
                 required_error: 'O ID do restaurante é obrigatório',
                 invalid_type_error: 'O ID do restaurante deve ser uma string',
               })
-              .cuid('O ID do restaurante deve ser um CUID válido')
               .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
           }),
           body: z.object({
@@ -35,7 +34,6 @@ export async function createOrder(app: FastifyInstance) {
                       required_error: 'O ID do produto é obrigatório',
                       invalid_type_error: 'O ID do produto deve ser uma string',
                     })
-                    .cuid('O ID do produto deve ser um CUID válido')
                     .max(
                       30,
                       'O ID do produto deve ter no máximo 30 caracteres',

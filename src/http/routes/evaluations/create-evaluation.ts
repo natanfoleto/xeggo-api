@@ -21,7 +21,6 @@ export async function createEvaluation(app: FastifyInstance) {
                 required_error: 'O ID do restaurante é obrigatório',
                 invalid_type_error: 'O ID do restaurante deve ser uma string',
               })
-              .cuid('O ID do restaurante deve ser um CUID válido')
               .max(30, 'O ID do restaurante deve ter no máximo 30 caracteres'),
             rate: z
               .number({

@@ -22,7 +22,6 @@ export async function getCategory(app: FastifyInstance) {
                 required_error: 'O ID da categoria é obrigatório',
                 invalid_type_error: 'O ID da categoria deve ser uma string',
               })
-              .cuid('O ID da categoria deve ser um CUID válido')
               .max(30, 'O ID da categoria deve ter no máximo 30 caracteres'),
           }),
           response: {

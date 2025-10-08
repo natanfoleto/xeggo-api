@@ -24,7 +24,6 @@ export async function approveOrder(app: FastifyInstance) {
                 required_error: 'O ID do pedido é obrigatório',
                 invalid_type_error: 'O ID do pedido deve ser uma string',
               })
-              .cuid('O ID do pedido deve ser um CUID válido')
               .max(30, 'O ID do pedido deve ter no máximo 30 caracteres'),
           }),
         },

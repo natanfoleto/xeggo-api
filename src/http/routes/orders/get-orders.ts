@@ -28,7 +28,6 @@ export async function getOrders(app: FastifyInstance) {
               .string({
                 invalid_type_error: 'O ID do pedido deve ser uma string',
               })
-              .cuid('O ID do pedido deve ser um CUID válido')
               .max(30, 'O ID do pedido deve ter no máximo 30 caracteres')
               .optional(),
             customerName: z
