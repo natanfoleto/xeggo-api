@@ -78,9 +78,8 @@ export async function uploadProductImage(app: FastifyInstance) {
           throw new BadRequestError('Arquivo de imagem inválido.')
         }
 
-        const time = new Date().getTime()
         const extension = body.file.filename.split('.').pop()
-        const fileName = `${time}.${extension}`
+        const fileName = `photo.${extension}`
         const objectName = `restaurants/${restaurantId}/products/${productId}/${fileName}`
 
         await app.s3Client.uploadFile(

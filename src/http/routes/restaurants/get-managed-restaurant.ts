@@ -20,6 +20,7 @@ export async function getManagedRestaurant(app: FastifyInstance) {
               id: z.string().cuid(),
               name: z.string(),
               description: z.string().nullable(),
+              avatarUrl: z.string().url().nullable(),
               managerId: z.string().nullable(),
               createdAt: z.date(),
               updatedAt: z.date(),
