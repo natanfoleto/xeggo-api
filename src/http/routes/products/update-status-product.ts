@@ -6,16 +6,16 @@ import { authenticate } from '@/http/middlewares/authenticate'
 import { BadRequestError } from '@/http/routes/_errors/bad-request-error'
 import { prisma } from '@/lib/prisma'
 
-export async function deleteProduct(app: FastifyInstance) {
+export async function updateStatusProduct(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(authenticate)
-    .delete(
-      '/products/:productId',
+    .patch(
+      '/products/:productId/status',
       {
         schema: {
           tags: ['Produtos'],
-          summary: 'Deletar produto',
+          summary: 'Atualizar status do produto',
           params: z.object({
             productId: z
               .string({
@@ -43,7 +43,7 @@ export async function deleteProduct(app: FastifyInstance) {
         await prisma.product.update({
           where: { id: productId },
           data: {
-            active: false,
+            active: !product.active,
           },
         })
 

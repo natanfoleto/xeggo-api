@@ -24,11 +24,11 @@ import { getMonthOrdersAmount } from './orders/get-month-orders-amount'
 import { getOrders } from './orders/get-orders'
 import { getOrderDetails } from './orders/get-orders-details'
 import { createProduct } from './products/create-product'
-import { deleteProduct } from './products/delete-product'
 import { deleteProductImage } from './products/delete-product-image'
 import { getProduct } from './products/get-product'
 import { getProducts } from './products/get-products'
 import { updateProduct } from './products/update-product'
+import { updateStatusProduct } from './products/update-status-product'
 import { uploadProductImage } from './products/upload-product-image'
 import { getProfile } from './profile/get-profile'
 import { updateProfile } from './profile/update-profile'
@@ -58,7 +58,7 @@ export default async function (app: FastifyInstance) {
   await app.register(updateProduct)
   await app.register(uploadProductImage)
   await app.register(deleteProductImage)
-  await app.register(deleteProduct)
+  await app.register(updateStatusProduct)
   await app.register(getProduct)
   await app.register(getProducts)
 

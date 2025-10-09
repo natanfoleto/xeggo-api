@@ -1,4 +1,5 @@
 import {
+  DeleteObjectCommand,
   DeleteObjectsCommand,
   ListBucketsCommand,
   ListObjectsV2Command,
@@ -51,6 +52,23 @@ class S3ClientWrapper {
       return response
     } catch (error) {
       console.error('Erro ao enviar arquivo:', error)
+      throw error
+    }
+  }
+
+  async deleteFile(bucketName: string, fileKey: string) {
+    try {
+      const command = new DeleteObjectCommand({
+        Bucket: bucketName,
+        Key: fileKey,
+      })
+
+      const response = await this.client.send(command)
+
+      return response
+    } catch (error) {
+      console.error('Erro ao deletar arquivo:', error)
+
       throw error
     }
   }
