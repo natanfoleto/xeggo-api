@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 import { BadRequestError } from '@/http/routes/_errors/bad-request-error'
 import { prisma } from '@/lib/prisma'
+import { createSlug } from '@/utils/create-slug'
 
 export async function registerRestaurant(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
@@ -57,9 +58,12 @@ export async function registerRestaurant(app: FastifyInstance) {
         data: { name: managerName, email, phone, role: 'manager' },
       })
 
+      const slug = createSlug(restaurantName)
+
       await prisma.restaurant.create({
         data: {
           name: restaurantName,
+          slug,
           managerId: manager.id,
         },
       })

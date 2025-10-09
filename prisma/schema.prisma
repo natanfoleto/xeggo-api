@@ -45,6 +45,7 @@ model Restaurant {
   id          String   @id @default(cuid()) @db.VarChar(30)
   name        String   @db.VarChar(100)
   description String?  @db.VarChar(500)
+  slug        String   @db.VarChar(100)
   managerId   String?  @db.VarChar(30)
   createdAt   DateTime @default(now()) @db.Timestamp(0)
   updatedAt   DateTime @updatedAt @db.Timestamp(0)
