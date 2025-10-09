@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -23,6 +24,12 @@ export async function getCategories(app: FastifyInstance) {
               .int('O índice da página deve ser um número inteiro')
               .min(0, 'O índice da página deve ser no mínimo 0')
               .default(0),
+            categoryName: z
+              .string({
+                invalid_type_error: 'O nome da categoria deve ser uma string',
+              })
+              .max(50, 'O nome da categoria deve ter no máximo 50 caracteres')
+              .optional(),
           }),
           response: {
             200: z.object({
@@ -51,15 +58,19 @@ export async function getCategories(app: FastifyInstance) {
       async (request, reply) => {
         const { restaurantId } = await request.getCurrentUser()
 
-        const { pageIndex } = request.query
+        const { pageIndex, categoryName } = request.query
+
+        const where: Prisma.CategoryWhereInput = { restaurantId }
+
+        if (categoryName) {
+          where.name = { contains: categoryName, mode: 'insensitive' }
+        }
 
         const perPage = 10
 
         const [categories, totalCount] = await Promise.all([
           prisma.category.findMany({
-            where: {
-              restaurantId,
-            },
+            where,
             include: {
               _count: {
                 select: {
@@ -73,11 +84,7 @@ export async function getCategories(app: FastifyInstance) {
             take: perPage,
             skip: pageIndex * perPage,
           }),
-          prisma.category.count({
-            where: {
-              restaurantId,
-            },
-          }),
+          prisma.category.count({ where }),
         ])
 
         return reply.send({
