@@ -24,6 +24,18 @@ enum OrderStatus {
   @@map("order_status")
 }
 
+enum WeekDay {
+  sunday    @map("0")
+  monday    @map("1")
+  tuesday   @map("2")
+  wednesday @map("3")
+  thursday  @map("4")
+  friday    @map("5")
+  saturday  @map("6")
+
+  @@map("week_day")
+}
+
 model User {
   id        String   @id @default(cuid()) @db.VarChar(30)
   name      String   @db.VarChar(100)
@@ -51,11 +63,12 @@ model Restaurant {
   createdAt   DateTime @default(now()) @db.Timestamp(0)
   updatedAt   DateTime @updatedAt @db.Timestamp(0)
 
-  manager     User?        @relation("ManagerRestaurants", fields: [managerId], references: [id], onDelete: SetNull)
-  categories  Category[]
-  products    Product[]
-  orders      Order[]
-  evaluations Evaluation[]
+  manager      User?         @relation("ManagerRestaurants", fields: [managerId], references: [id], onDelete: SetNull)
+  categories   Category[]
+  products     Product[]
+  orders       Order[]
+  openingHours OpeningHour[]
+  evaluations  Evaluation[]
 
   @@index([managerId])
   @@map("restaurants")
@@ -195,6 +208,21 @@ model OrderItemComplement {
   @@index([orderItemId])
   @@index([complementId])
   @@map("order_items_complements")
+}
+
+model OpeningHour {
+  id           String   @id @default(cuid()) @db.VarChar(30)
+  restaurantId String   @db.VarChar(30)
+  weekDay      WeekDay
+  openTime     String   @db.VarChar(5)
+  closeTime    String   @db.VarChar(5)
+  createdAt    DateTime @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime @updatedAt @db.Timestamp(0)
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([restaurantId, weekDay])
+  @@map("opening_hours")
 }
 
 model Evaluation {
