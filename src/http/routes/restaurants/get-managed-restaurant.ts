@@ -39,7 +39,7 @@ export async function getManagedRestaurant(app: FastifyInstance) {
         })
 
         if (!restaurant) {
-          reply.status(404).send({ message: 'Restaurant not found.' })
+          reply.status(404).send({ message: 'Restaurante não encontrado.' })
 
           return
         }

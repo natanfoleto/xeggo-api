@@ -33,11 +33,13 @@ import { uploadProductImage } from './products/upload-product-image'
 import { getProfile } from './profile/get-profile'
 import { updateProfile } from './profile/update-profile'
 import { deleteRestaurantAvatar } from './restaurants/delete-restaurant-avatar'
+import { getAddress } from './restaurants/get-address'
 import { getManagedRestaurant } from './restaurants/get-managed-restaurant'
 import { getOpeningHours } from './restaurants/get-opening-hours'
 import { getPaymentMethods } from './restaurants/get-payment-methods'
 import { getSegments } from './restaurants/get-segments'
 import { registerRestaurant } from './restaurants/register-restaurant'
+import { updateAddress } from './restaurants/update-address'
 import { updateOpeningHours } from './restaurants/update-opening-hours'
 import { updatePaymentMethods } from './restaurants/update-payment-methods'
 import { updateSegments } from './restaurants/update-segments'
@@ -93,4 +95,6 @@ export default async function (app: FastifyInstance) {
   await app.register(updateSegments)
   await app.register(getPaymentMethods)
   await app.register(updatePaymentMethods)
+  await app.register(getAddress)
+  await app.register(updateAddress)
 }
